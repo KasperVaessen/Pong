@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
+    <script>let ballX, ballY;
+    let angle;
+    let speed;
+
+    function Ball(speed) {
+        this.ballX = 300;
+        this.ballY = 200;
+        this.angle = random(0, 2*Math.PI);
+        this.speed = speed;
+    };
+
+    Ball.prototype.move = function(acc) {
+        this.ballX += (this.speed*Math.sin(this.angle));
+        this.ballY += (this.speed*Math.cos(this.angle));
+        this.speed += acc;
+    };
+
+    Ball.prototype.checkBounce = function() {
+        if (this.ballX <= 10 || this.ballX >= 590) {
+            this.angle += -2 * this.angle;
+            return
+        }
+        if (this.ballX < xPos + 60 && this.ballX > xPos - 60) {
+            if (this.ballY >= 378) {
+                let diff = (this.ballX - xPos)/60;
+                this.angle = Math.PI - diff * (5*Math.PI) / 12;
+            }
+        }
+        if (this.ballX < xPos2 + 60 && this.ballX > xPos2 - 60) {
+            if (this.ballY <= 23) {
+                let diff = (xPos2 - this.ballX)/60;
+                this.angle = 2*Math.PI - diff * (5/12) * Math.PI;
+            }
+        }
+    };
+
+    Ball.prototype.checkLose = function() {
+        if(this.ballY >= 390) {
+            textSize(50);
+            text("PLAYER 2 WINS", 120, 200);
+            this.speed = 0;
+        }
+        if(this.ballY <= 10) {
+            textSize(50);
+            text("PLAYER 1 WINS", 120, 200);
+            this.speed = 0;
+        }
+    };
+
+    </script>
+    <script>let xPos;
+    let xPos2;
+    let ball;
+    let a;
+    let v;
+
+    function setup() {
+        createCanvas(600, 400);
+        let p = createP("Use A-D / Arrow keys to control the paddles");
+        p.position(0,400);
+        ball = new Ball(2);
+        xPos = 300;
+        xPos2 = 300;
+        a = 0.002;
+        v = 2.5;
+    }
+
+    function draw() {
+        background(220);
+        strokeWeight(0);
+        fill(255,0,0);
+
+        ball.checkBounce();
+        ball.checkLose();
+        ball.move(a);
+        ellipse(ball.ballX, ball.ballY, 20);
+
+        if(keyIsDown(LEFT_ARROW) && xPos > 50) {
+            xPos -= v;
+        }
+        if(keyIsDown(RIGHT_ARROW) && xPos < 550) {
+            xPos += v;
+        }
+
+        if(keyIsDown(65) && xPos2 > 50) {
+            xPos2 -= v;
+        }
+        if(keyIsDown(68) && xPos2 < 550) {
+            xPos2 += v;
+        }
+
+        strokeWeight(5);
+        fill(255, 0, 0);
+        line(xPos-50, 390, xPos+50, 390);
+        line(xPos2-50, 10, xPos2+50, 10);
+        if(v > 7) {
+            a = 0;
+        }
+        v += a;
+    }</script>
+</head>
+<body>
+
+</body>
+</html>
